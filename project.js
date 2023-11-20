@@ -45,16 +45,14 @@ Room.prototype.findDevice = function(device) {
     };
     
 Room.prototype.__deviceValid = function(device){
-    if(this.findDevice(device) === false){
         if(typeof device.name === 'string' && device.name.trim().length > 0){
             device.name = device.name.trim();
             return device;
         }
-    }
 }
 
 Room.prototype.addDevice = function (device) {
-    if(this.__deviceValid(device)){
+    if(this.__deviceValid(device) && this.findDevice(device) === false){
         this.devices.push(device);
         console.log(device.name + ' was added to the '+ this.name+ "room");
     } 
@@ -62,24 +60,76 @@ Room.prototype.addDevice = function (device) {
    
 }
 
+function displayDeletePrompt(device, room, deleteCallback) {
+    var result = prompt('Are you sure that you want to delete ' + device.name + ' from ' + room.name + '? Answer yes, no');
+    if (typeof result === 'string' && result.trim().length > 0) {
+        if (result.trim().toLowerCase() === 'yes') {
+            deleteCallback(device, room);
+        } else if(result.trim().toLowerCase() !== 'no'){
+            displayDeletePrompt(device, room, deleteCallback)
+        }
+    }
+}
+
+Room.prototype.deleteDevice = function (device) {
+    if (this.__deviceValid(device) && this.findDevice(device) === true) {
+        displayDeletePrompt(device, this, function (device, room) {
+            for (var i = 0; i < room.devices.length; i++) {
+                if (room.devices[i].name === device.name) {
+                    room.devices.splice(i, 1);
+                    console.log(device.name + ' was deleted from ' + room.name);
+                    break; // exit the loop once the device is deleted
+                }
+            }
+        });
+    }
+}
+
+
+function Device(name, isOn){
+    this.name = name;
+    this._isOn = isOn;
+    if(this._isOn === undefined){
+        this._isOn = false;
+    }
+}
+
+Device.prototype.turnOn = function(){
+    if(this._isOn === false){
+        this._isOn = true;
+        console.log(this.name, "is on")}
+}
+
+Device.prototype.turnOff = function(){
+    if(this._isOn === true){
+        this._isOn = false;
+        console.log(this.name, "is off")}
+}
+
 SmartHome.prototype.turnOnAllDevices = function () {
     this.rooms.forEach(function (room) {
         room.devices.forEach(function (device) {
-            device.__isOn = true;
-            console.log(device.name+ ' is turned on');
+            if(device._isOn === false){
+    
+                device._isOn = true;
+            console.log(device.name+ ' is turned on');}
         });
     })
    
 }
 
-SmartHome.prototype.turnOffAllDevices = function () {
+SmartHome.prototype.turnOffAllDevices = function (callback){
     this.rooms.forEach(function (room) {
         room.devices.forEach(function (device) {
-            device.__isOn = false;
-            console.log(device.name+' is turned off');
+            if(device._isOn === true){
+    
+            device._isOn = false;
+            console.log(device.name+ ' is turned off');}
         });
     })
 }
+
+
 
 SmartHome.prototype.getDevices = function () {
     this.rooms.forEach(function(room){
@@ -103,24 +153,6 @@ SmartHome.prototype.getDeviceByName = function (name) {
     }
 }
 
-function Device(name, isOn){
-    this.name = name;
-    this._isOn = isOn;
-    if(this._isOn === undefined){
-        this._isOn = false;
-    }
-}
-
-Device.prototype.turnOn = function(){
-    this._isOn = true;
-    console.log(this.name, "is on");
-}
-
-Device.prototype.turnOff = function(){
-    this._isOn = false;
-    console.log(this.name, "is off");
-}
-
 function Lamp(name, isOn = false, brightness){
     Device.call(this, name, isOn);
     this.__brightness = brightness;
@@ -141,6 +173,15 @@ function AirConditioner(name, isOn = false, temperature) {
 AirConditioner.prototype = Object.create(Device.prototype);
 AirConditioner.prototype.constructor = AirConditioner;
 
+
+AirConditioner.prototype.timer = function (callback, duration) {
+    if(this._isOn === false){
+        this.turnOn();
+    }
+    setTimeout(function () {
+        callback(); 
+    }, duration);
+};
 function TVset(name, isOn = false, channel, volume) {
   Device.call(this, name, isOn);
   this.__channel = channel;
@@ -155,9 +196,5 @@ var room1 = new Room('living room');
 sh.addRoom(room1);
 room1.addDevice(new Lamp("Lamp1"));
 room1.addDevice(new Lamp("Lamp2"));
-sh.getDevices();
-
-var lamp2 = sh.getDeviceByName("Lamp2");
-console.log(lamp2);
-sh.getDeviceByName("Lamp2").turnOn();
+sh.turnOnAllDevices();
 sh.turnOffAllDevices();

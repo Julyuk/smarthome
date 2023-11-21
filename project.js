@@ -1,22 +1,24 @@
+'use strict';
 function SmartHome(name) {
     this.name = name;
     this.rooms = [];
-}
+};
 
 SmartHome.prototype.findRoom = function(room) {
     for (var i = 0; i < this.rooms.length; i++) {
         if (this.rooms[i].name === room.name) {
-            console.log(room.name+" exists in the "+this.name)
+            console.log(room.name + " exists in the " + this.name);
             return true;
-           } 
         } 
-        console.log(room.name+" doesn't exist in the "+this.name)
-        return false;
+    } 
+    console.log(room.name + " doesn't exist in the " + this.name);
+    return false;
 };
 
-SmartHome.prototype.__roomValid = function(room){
-    if(this.findRoom(room) === false){
-        if(typeof room.name === 'string' && room.name.trim().length > 0){
+SmartHome.prototype.__roomValid = function(room) {
+    if(this.findRoom(room) === false) {
+        if(typeof room.name === 'string' 
+        && room.name.trim().length > 0) {
             room.name = room.name.trim();
             return room;
         }
@@ -24,16 +26,19 @@ SmartHome.prototype.__roomValid = function(room){
 }
 
 SmartHome.prototype.addRoom = function (room) {
-    if(this.__roomValid(room)){
+    if(this.__roomValid(room)) {
         this.rooms.push(room);
         console.log(room.name + ' was added to the '+ this.name);
-    } else {console.log('Invalid room name or this room already exists in the house.');}
+        return this.rooms;
+    } else {
+        console.log('Invalid room name or this room already exists in the house.');
+    }
 }
 
 SmartHome.prototype.getRoomByName = function (name) {
     for (var i = 0; i < this.rooms.length; i++) {
         var room = this.rooms[i];
-        if(room.name === name){
+        if(room.name === name) {
             console.log(room.name + ' exists in this house');
             return room;
         } else {
@@ -44,11 +49,11 @@ SmartHome.prototype.getRoomByName = function (name) {
 }
 
 SmartHome.prototype.setNewRoomName = function(room, newRoomName) {
-    if(this.findRoom(room) === true){
-        if(typeof newRoomName === 'string' 
-        && newRoomName.trim().length > 0 
-        && newRoomName !== room.name 
-        && this.getRoomByName(newRoomName)===null){
+    if(this.findRoom(room) === true) {
+        if(typeof newRoomName === 'string' && 
+        newRoomName.trim().length > 0 &&
+        newRoomName !== room.name &&
+        this.getRoomByName(newRoomName)===null) {
             var oldName = room.name;
             room.name = newRoomName.trim();
             console.log('The name of '+oldName+' was changed to '+room.name);
@@ -56,34 +61,32 @@ SmartHome.prototype.setNewRoomName = function(room, newRoomName) {
     }
 }
 
-SmartHome.prototype.deleteRoom = function(room){
+SmartHome.prototype.deleteRoom = function(room) {
     //1 room should remain
-    if ( this.findRoom(room) === true){
-        if(this.rooms.length>1){
+    if ( this.findRoom(room) === true) {
+        if(this.rooms.length > 1) {
             var index = this.rooms.indexOf(room);
             this.rooms.splice(index, 1);
             console.log(room.name + ' was deleted from ' + this.name);
         } else {
             console.log("Cannot delete the last room. At least one room should always remain.");
         }
-    } else{
+    } else {
         console.log("The specified room doesn't exist in this SmartHome.")
     }
 }
 
 SmartHome.prototype.setNewDeviceName = function (device,newDeviceName) {
-    if( this.getDeviceByName(device.name) === device 
-    && this.getDeviceByName(newDeviceName) === null
-        && typeof(newDeviceName) === 'string' 
-        && newDeviceName.trim().length>0
-        ){
-            var oldName = device.name;
-            device.name = newDeviceName.trim();
-            console.log('The name of '+oldName+' was changed to '+device.name);
-    } else{
-        console.log('Wrong format');
+    if( this.getDeviceByName(device.name) === device && 
+    this.getDeviceByName(newDeviceName) === null&& 
+    typeof(newDeviceName) === 'string' && 
+    newDeviceName.trim().length > 0 ) {
+        var oldName = device.name;
+        device.name = newDeviceName.trim();
+        console.log('The name of '+oldName+' was changed to '+device.name);
+    } else {
+        console.log('Wrong format of the device name');
     }
-   
 }
 
 function Room(name) {
@@ -94,42 +97,46 @@ function Room(name) {
 Room.prototype.findDevice = function(device) {
     for (var i = 0; i < this.devices.length; i++) {
         if (this.devices[i].name === device.name) {
-            console.log(device.name+" exists in the "+this.name)
+            console.log(device.name + " exists in the " + this.name)
             return true;
-           } 
         } 
-        return false;
-    };
+    } 
+    return false;
+};
     
-Room.prototype.__deviceValid = function(device){
-        if(typeof device.name === 'string' && device.name.trim().length > 0){
-            device.name = device.name.trim();
-            return device;
-        }
+Room.prototype.__deviceValid = function(device) {
+    if(typeof device.name === 'string' && 
+    device.name.trim().length > 0){
+        device.name = device.name.trim();
+        return device;
+    }
 }
 
 Room.prototype.addDevice = function (device) {
-    if(this.__deviceValid(device) && this.findDevice(device) === false){
+    if(this.__deviceValid(device) && 
+    this.findDevice(device) === false) {
         this.devices.push(device);
-        console.log(device.name + ' was added to the '+ this.name);
-    } 
-   else {console.log('Invalid device name or this device already exists in the room.');}
-   
+        console.log(device.name + ' was added to the ' + this.name);
+    } else {
+        console.log('Invalid device name or this device already exists in the room.');
+    }
 }
 
 Room.prototype.displayDeletePrompt = function(device, room, deleteCallback) {
-    var result = prompt('Are you sure that you want to delete ' + device.name + ' from ' + room.name + '? Answer yes, no');
-    if (typeof result === 'string' && result.trim().length > 0) {
+    var result = prompt('Are you sure that you want to delete ' + device.name + ' from ' + room.name + '? Answer yes or no');
+    if (typeof result === 'string' && 
+    result.trim().length > 0) {
         if (result.trim().toLowerCase() === 'yes') {
             deleteCallback(device, room);
-        } else if(result.trim().toLowerCase() !== 'no'){
+        } else if(result.trim().toLowerCase() !== 'no') {
             displayDeletePrompt(device, room, deleteCallback)
         }
     }
 }
 
 Room.prototype.deleteDevice = function (device) {
-    if (this.__deviceValid(device) && this.findDevice(device) === true) {
+    if (this.__deviceValid(device) && 
+    this.findDevice(device) === true) {
         this.displayDeletePrompt(device, this, function (device, room) {
             for (var i = 0; i < room.devices.length; i++) {
                 if (room.devices[i].name === device.name) {
@@ -142,61 +149,68 @@ Room.prototype.deleteDevice = function (device) {
     }
 }
 
-function Device(name, isOn){
+function Device(name, isOn) {
     this.name = name;
     this._isOn = isOn;
-    if(this._isOn === undefined){
+    if(this._isOn === undefined) {
         this._isOn = false;
     }
 }
 
-Device.prototype.getisOnStatus = function(){
-     if(this._isOn === false){
+Device.prototype.getisOnStatus = function() {
+     if(this._isOn === false) {
         console.log(this.name, "is off")
-    } else{
-            console.log(this.name, "is on")
+        return this._isOn;
+    } else {
+        console.log(this.name, "is on")
+        return this._isOn;
     }
 }
 
-Device.prototype.turnOn = function(){
-    if(this._isOn === false){
-        if(this instanceof Lamp){
-            if(this.__brightness === undefined){
-                this.__brightness =1;
+Device.prototype.turnOn = function() {
+    if(this._isOn === false) {
+        if(this instanceof Lamp) {
+            if(this.__brightness === undefined) {
+                this.__brightness = 1;
             }
         }
-        if(this instanceof AirConditioner){
-            if(this.__temperature=== undefined){
-            this.__temperature =20;}
+        if(this instanceof AirConditioner) {
+            if(this.__temperature === undefined) {
+                this.__temperature = 20;
+            }
         }
         if(this instanceof TVset){
             if(this.__channel === undefined){
-            this.__channel =1;}
+                this.__channel = 1;
+            }
             if(this.__volume === undefined){
-            this.__volume = 1;}
+                this.__volume = 1;
+            }
         }
         this._isOn = true;
-        console.log(this.name, "is on")}
+        console.log(this.name, "is on")
+    }
 }
 
-Device.prototype.turnOff = function(){
-    if(this._isOn === true){
+Device.prototype.turnOff = function() {
+    if(this._isOn === true) {
         this._isOn = false;
-        console.log(this.name, "is off")}
+        console.log(this.name, "is off");
+    }
 }
 
 SmartHome.prototype.turnOnAllDevices = function () {
     this.rooms.forEach(function (room) {
         room.devices.forEach(function (device) {
-            if(device._isOn === false){
+            if(device._isOn === false) {
                 if(device instanceof Lamp){
                     device.turnOn();
                 }
                 device._isOn = true;
-                console.log(device.name+ ' is turned on');}
+                console.log(device.name+ ' is turned on');
+            }
         });
-    })
-   
+    });
 }
 
 SmartHome.prototype.turnOffAllDevices = function (callback){
@@ -210,30 +224,29 @@ SmartHome.prototype.turnOffAllDevices = function (callback){
 }
 
 SmartHome.prototype.getDevices = function () {
-    this.rooms.forEach(function(room){
+    this.rooms.forEach(function(room) {
         room.devices.forEach(function (device) {
             console.log(device.name);
         });
     })
-   
 }
 
 SmartHome.prototype.getRooms = function () {
-    this.rooms.forEach(function(room){
+    this.rooms.forEach(function(room) {
             console.log(room.name);
     })
    
 }
 
 SmartHome.prototype.getDeviceByName = function (name) {
-    var n;
+    var index;
     for (var i = 0; i < this.rooms.length; i++) {
         var device = this.rooms[i].devices.find(function (device) {
-            n=i;
+            index = i;
             return device.name === name;
         });
         if (device) {
-            console.log(device.name + ' exists in this house, in the '+this.rooms[n].name);
+            console.log(device.name + ' exists in this house, in the ' + this.rooms[index].name);
             return device;
         } else {
             console.log("Such a device isn't registered in the system");
@@ -242,11 +255,11 @@ SmartHome.prototype.getDeviceByName = function (name) {
     }
 }
 
-function Lamp(name, isOn, brightness){
+function Lamp(name, isOn, brightness) {
     Device.call(this, name, isOn);
     this.__brightness = brightness;
-    if(this.__brightness === undefined){
-        if(this._isOn === true){
+    if(this.__brightness === undefined) {
+        if(this._isOn === true) {
             this.__brightness = 1;
         }
     }
@@ -255,9 +268,9 @@ function Lamp(name, isOn, brightness){
 Lamp.prototype = Object.create(Device.prototype);
 Lamp.prototype.constructor = Lamp;
 
-Lamp.prototype.getCurrentBrightness = function(){
-    if(this._isOn === true){
-        if(this.__brightness === undefined){
+Lamp.prototype.getCurrentBrightness = function() {
+    if(this._isOn === true) {
+        if(this.__brightness === undefined) {
             this.setBrightness();
         }
     }
@@ -265,31 +278,32 @@ Lamp.prototype.getCurrentBrightness = function(){
     return this.__brightness;
 }
 
-Lamp.prototype.setBrightness = function(brightness){
-    if(this._isOn === true){
-        if(this.__brightness === undefined || brightness === undefined){
+Lamp.prototype.setBrightness = function(brightness) {
+    if(this._isOn === true) {
+        if(this.__brightness === undefined || 
+        brightness === undefined) {
             this.__brightness = 35;
         } else {
-            if(typeof brightness === 'number'){
+            if(typeof brightness === 'number') {
                 brightness= parseInt(brightness);
-                if(brightness>=1 && brightness<=100){
+                if(brightness>=1 && brightness<=100) {
                     this.__brightness = brightness;
-                } else{
+                } else {
                     console.log('Wrong format');
                 }
             }
         }
-    } else{
+    } else {
         console.log('Please, turn on the lamp first');
     }
 }
 
-Lamp.prototype.setBrightnessBrighterBy1 = function(){
+Lamp.prototype.setBrightnessBrighterBy1 = function() {
     var brightness = this.__brightness + 1;
     this.setBrightness(brightness);
 }
 
-Lamp.prototype.setBrightnessDullerBy1 = function(){
+Lamp.prototype.setBrightnessDullerBy1 = function() {
     var brightness = this.__brightness - 1;
     this.setBrightness(brightness);
 }
@@ -297,8 +311,8 @@ Lamp.prototype.setBrightnessDullerBy1 = function(){
 function AirConditioner(name, isOn, temperature) {
     Device.call(this, name, isOn);
     this.__temperature = temperature;
-    if(this.__temperature === undefined){
-        if(this._isOn === true){
+    if(this.__temperature === undefined) {
+        if(this._isOn === true) {
             this.__temperature = 20;
         }
     }
@@ -309,143 +323,146 @@ AirConditioner.prototype.constructor = AirConditioner;
 
 
 AirConditioner.prototype.timer = function (callback, duration) {
-    if(this._isOn === false){
+    if(this._isOn === false) {
         this.turnOn();
     }
-    setTimeout(function () {
+    setTimeout(function() {
         callback(); 
     }, duration);
 };
 
-AirConditioner.prototype.setTemperature = function(temp){
-    if(this._isOn === true){
-        if(this.__temperature === undefined || temp === undefined){
+AirConditioner.prototype.setTemperature = function(temp) {
+    if(this._isOn === true) {
+        if(this.__temperature === undefined || 
+        temp === undefined){
             this.__temperature = 20;
         } else {
-            if(typeof temp === 'number'){
+            if(typeof temp === 'number') {
                 temp = parseInt(temp);
-                if(temp>=0 && temp<=38){
+                if(temp>=0 && temp<=38) {
                     this.__temperature = temp;
-                } else{
+                } else {
                     console.log('Wrong format');
                 }
             }
         }
-    } else{
+    } else {
         console.log('Please, turn on the conditioner first');
     }
 }
 
-AirConditioner.prototype.getCurrentTemperature = function(){
+AirConditioner.prototype.getCurrentTemperature = function() {
     console.log(this.__temperature);
     return this.__temperature;
 }
 
-AirConditioner.prototype.setTemperatureWarmerBy1 = function(){
-    var temp = this.__temperature+1;
+AirConditioner.prototype.setTemperatureWarmerBy1 = function() {
+    var temp = this.__temperature + 1;
     this.setTemperature(temp);
 }
 
-AirConditioner.prototype.setTemperatureColderBy1 = function(){
-    var temp = this.__temperature-1;
+AirConditioner.prototype.setTemperatureColderBy1 = function() {
+    var temp = this.__temperature - 1;
     this.setTemperature(temp);
 }
 
 function TVset(name, isOn, channel, volume) {
-  Device.call(this, name, isOn);
-  this.__channel = channel;
-  this.__volume = volume;
-  if(this.__channel === undefined){
-    if(this._isOn === true){
-        this.__channel = 1;
+    Device.call(this, name, isOn);
+    this.__channel = channel;
+    this.__volume = volume;
+    if(this.__channel === undefined) {
+        if(this._isOn === true) {
+            this.__channel = 1;
+        }
     }
-}
-if(this.__volume === undefined){
-    if(this._isOn === true){
-        this.__volume = 1;
+    if(this.__volume === undefined) {
+        if(this._isOn === true) {
+            this.__volume = 1;
+        }
     }
-}
 }
 
 TVset.prototype = Object.create(Device.prototype);
 TVset.prototype.constructor = TVset;
 
-TVset.prototype.setChannel = function(channel){
-    if(this._isOn === true){
-        if(this.__channel === undefined || channel === undefined){
+TVset.prototype.setChannel = function(channel) {
+    if(this._isOn === true) {
+        if(this.__channel === undefined || 
+        channel === undefined){
             this.__channel = 1;
         } else {
-            if(typeof channel === 'number'){
+            if(typeof channel === 'number') {
                 channel = parseInt(channel);
-                if(channel>=1 && channel<=100){
+                if(channel>=1 && channel<=100) {
                     this.__channel = channel;
                 } else{
                     console.log('Wrong channel format');
                 }
             }
         }
-    } else{
+    } else {
         console.log('Please, turn on the TV first');
     }
 }
 
-TVset.prototype.getCurrentChannel = function(){
+TVset.prototype.getCurrentChannel = function() {
     console.log(this.__channel);
     return this.__channel;
 }
 
-TVset.prototype.setNextChannel = function(){
-    var channel = this.__channel+1;
+TVset.prototype.setNextChannel = function() {
+    var channel = this.__channel + 1;
     this.setChannel(channel);
 }
 
-TVset.prototype.setPreviousChannel = function(){
-    var channel = this.__channel-1;
+TVset.prototype.setPreviousChannel = function() {
+    var channel = this.__channel - 1;
     this.setChannel(channel);
 }
 
-TVset.prototype.setVolume = function(volume){
-    if(this._isOn === true){
-        if(this.__volume === undefined || volume === undefined){
+TVset.prototype.setVolume = function(volume) {
+    if(this._isOn === true) {
+        if(this.__volume === undefined || 
+        volume === undefined) {
             this.__volume = 1;
         } else {
-            if(typeof volume === 'number'){
+            if(typeof volume === 'number') {
                 channel = parseInt(volume);
-                if(volume>=1 && volume<=50){
+                if(volume>=1 && volume<=50) {
                     this.__volume = volume;
-                } else{
+                } else {
                     console.log('Wrong volume format');
                 }
             }
         }
-    } else{
+    } else {
         console.log('Please, turn on the TV first');
     }
 }
 
-TVset.prototype.getCurrentVolume = function(){
+TVset.prototype.getCurrentVolume = function() {
     console.log(this.__volume);
     return this.__volume;
 }
 
-TVset.prototype.setVolumeLouderBy1 = function(){
-    var volume = this.__volume +1;
+TVset.prototype.setVolumeLouderBy1 = function() {
+    var volume = this.__volume + 1;
     this.setVolume(volume);
 }
 
-TVset.prototype.setVolumeQuieterBy1 = function(){
-    var volume = this.__volume -1;
+TVset.prototype.setVolumeQuieterBy1 = function() {
+    var volume = this.__volume - 1;
     this.setVolume(volume);
 }
 
-Device.prototype.generateRandom = function(maxLimit){
+Device.prototype.generateRandomNumber = function(maxLimit) {
     var num = Math.random() * maxLimit;
     num = Math.floor(num);
     return num;
   }
 
-TVset.prototype.setRandomChannel = function(){
-    var randomChannel = this.generateRandom(100);
+TVset.prototype.setRandomChannel = function() {
+    var randomChannel = this.generateRandomNumber(100);
     this.setChannel(randomChannel);
 }
 
@@ -489,7 +506,7 @@ lamp2.getCurrentBrightness();//6
 lamp2.setBrightnessDullerBy1();
 lamp2.getCurrentBrightness();//5
 var cond1 = room1.addDevice(new AirConditioner('Conditioner1'));
-cond1=sh.getDeviceByName('Conditioner1');
+cond1 = sh.getDeviceByName('Conditioner1');
 cond1.turnOn();
 cond1.timer(function(){cond1.turnOff()},3000); // after 3s ->Conditioner1 is off
 cond1.timer(function(){cond1.turnOn()},0);//Conditioner1 is on

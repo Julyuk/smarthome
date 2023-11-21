@@ -83,7 +83,7 @@ SmartHome.prototype.setNewDeviceName = function (device,newDeviceName) {
     newDeviceName.trim().length > 0 ) {
         var oldName = device.name;
         device.name = newDeviceName.trim();
-        console.log('The name of '+oldName+' was changed to '+device.name);
+        console.log('The name of '+ oldName + ' was changed to ' + device.name);
     } else {
         console.log('Wrong format of the device name');
     }
